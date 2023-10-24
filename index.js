@@ -3,6 +3,9 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 
+const canciones = require("./routes/canciones");
+const buscador = require("./routes/buscador");
+
 const app = express();
 
 app.use(morgan("dev"));
@@ -10,6 +13,9 @@ app.use(cors());
 app.use(express.json());
 
 require("dotenv").config();
+
+app.use("/api", canciones);
+app.use("/api", buscador);
 
 app.get("/api/*", (req,res)=>{
     res.status(404).json({

@@ -3,6 +3,38 @@
 BEGIN;
 
 
+CREATE TABLE IF NOT EXISTS public.actividades
+(
+    id_activity SERIAL NOT NULL,
+    activity_name character varying COLLATE pg_catalog."default",
+    CONSTRAINT actividades_pkey PRIMARY KEY (id_activity),
+    CONSTRAINT actividades_activity_name_key UNIQUE (activity_name)
+);
+
+CREATE TABLE IF NOT EXISTS public.climas
+(
+    id_climates SERIAL NOT NULL,
+    climates_name character varying COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT climas_pkey PRIMARY KEY (id_climates),
+    CONSTRAINT climas_climates_name_key UNIQUE (climates_name)
+);
+
+CREATE TABLE IF NOT EXISTS public.estadosdeanimo
+(
+    id_mood SERIAL NOT NULL ,
+    mood_name character varying COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT estadosdeanimo_pkey PRIMARY KEY (id_mood),
+    CONSTRAINT estadosdeanimo_mood_name_key UNIQUE (mood_name)
+);
+
+CREATE TABLE IF NOT EXISTS public.generos
+(
+    id_genre SERIAL NOT NULL,
+    genre_name character varying COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT generos_pkey PRIMARY KEY (id_genre),
+    CONSTRAINT generos_genre_name_key UNIQUE (genre_name)
+);
+
 CREATE TABLE IF NOT EXISTS public.usuarios
 (
     id serial,
@@ -13,31 +45,191 @@ CREATE TABLE IF NOT EXISTS public.usuarios
     CONSTRAINT usuarios_username_key UNIQUE (username)
 );
 
-CREATE TABLE IF NOT EXISTS public.actividades
+CREATE TABLE IF NOT EXISTS public.canciones
 (
-    id_activity serial NOT NULL,
-    activity_name character varying,
-    PRIMARY KEY (id_activity)
+    id_canciones serial not null,
+    artist_id integer NOT NULL,
+    mood_id integer NOT NULL,
+    activity_id integer NOT NULL,
+    genre_id integer NOT NULL,
+    climates_id integer NOT NULL,
+    duration integer NOT NULL,
+    PRIMARY KEY (id_canciones)
 );
 
-CREATE TABLE IF NOT EXISTS public.estadosdeanimo
+CREATE TABLE IF NOT EXISTS public.artistas
 (
-    id_mood serial NOT NULL,
-    mood_name character varying NOT NULL,
-    PRIMARY KEY (id_mood)
+    id_artist serial NOT NULL,
+    name_artist character varying NOT NULL,
+    PRIMARY KEY (id_artist),
+    CONSTRAINT artistas_artist_name_key UNIQUE (name_artist)
 );
 
-CREATE TABLE IF NOT EXISTS public.climas
+CREATE TABLE IF NOT EXISTS public.playlists
 (
-    id_climates serial NOT NULL,
-    climates_name character varying NOT NULL,
-    PRIMARY KEY (id_climates)
+    id_playlist serial NOT NULL,
+    user_id integer NOT NULL,
+    name_playlist character varying NOT NULL,
+    PRIMARY KEY (id_playlist)
 );
 
-CREATE TABLE IF NOT EXISTS public.generos
+CREATE TABLE IF NOT EXISTS public.canciones_playlists
 (
-    id_genre serial NOT NULL,
-    genre_name character varying NOT NULL,
-    PRIMARY KEY (id_genre)
+    playlist_id integer NOT NULL,
+    canciones_id integer NOT NULL
 );
+
+ALTER TABLE IF EXISTS public.canciones
+    ADD CONSTRAINT canciones_mood_id_fkey FOREIGN KEY (mood_id)
+    REFERENCES public.estadosdeanimo (id_mood) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.canciones
+    ADD CONSTRAINT canciones_activity_id_fkey FOREIGN KEY (activity_id)
+    REFERENCES public.actividades (id_activity) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.canciones
+    ADD CONSTRAINT canciones_genre_id_fkey FOREIGN KEY (genre_id)
+    REFERENCES public.generos (id_genre) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.canciones
+    ADD CONSTRAINT canciones_climates_id_fkey FOREIGN KEY (climates_id)
+    REFERENCES public.climas (id_climates) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.canciones
+    ADD CONSTRAINT canciones_artist_id_fkey FOREIGN KEY (artist_id)
+    REFERENCES public.artistas (id_artist) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.playlists
+    ADD CONSTRAINT playlists_user_id_fkey FOREIGN KEY (user_id)
+    REFERENCES public.usuarios (id_users) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.canciones_playlists
+    ADD CONSTRAINT canciones_playlist_canciones_id_fkey FOREIGN KEY (canciones_id)
+    REFERENCES public.canciones (id_canciones) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.canciones_playlists
+    ADD CONSTRAINT canciones_playlist_playlist_id_fkey FOREIGN KEY (playlist_id)
+    REFERENCES public.playlists (id_playlist) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
 END;
+
+--@block
+INSERT INTO public.actividades (activity_name) VALUES
+    ('Ejercicio Físico'),
+    ('Limpieza'),
+    ('Celebración'),
+    ('Dormir'),
+    ('Meditar'),
+    ('Social'),
+    ('Estudiar'),
+    ('Relajación'),
+    ('Viajando');
+
+--@block
+INSERT INTO public.climas (climates_name) VALUES
+    ('Frio'),
+    ('Calor'),
+    ('Lluvia');
+
+--@block
+INSERT INTO public.estadosdeanimo (mood_name) VALUES
+    ('Triste'),
+    ('Felíz'),
+    ('Fiesta');
+
+
+--@block
+INSERT INTO public.generos (genre_name) VALUES
+    ('Rock'),
+    ('Country'),
+    ('Soul'),
+    ('Jazz'),
+    ('Blues'),
+    ('Hip-Hop'),
+    ('Pop'),
+    ('Reggae'),
+    ('Folk'),
+    ('R&B'),
+    ('Clásico'),
+    ('Alternativo'),
+    ('Ambiente'),
+    ('EDM'),
+    ('Electrónica'),
+    ('Disco'),
+    ('New Age'),
+    ('Punk');
+
+--@block
+INSERT INTO public.usuarios (email, username, password) VALUES
+    ('usuario1@example.com', 'usuario1', 'contraseña1'),
+    ('usuario2@example.com', 'usuario2', 'contraseña2'),
+    ('usuario3@example.com', 'usuario3', 'contraseña3');
+
+--@block
+INSERT INTO public.artistas (name_artist) VALUES
+    ('Avicii'),
+    ('Arcángel'),
+    ('Rosalía'),
+    ('Post Malone');
+
+--@block
+INSERT INTO public.artistas (name_artist) VALUES
+    ('Bad Bunny'),
+    ('Duki'),
+    ('Michael Jackson'),
+    ('Ray Charles'),
+    ('Cuarteto De Nos'),
+    ('Shakira');
+--@block
+INSERT INTO public.canciones (artist_id, mood_id, activity_id, genre_id, climates_id, duration, cancion_name) VALUES 
+ (1, 3, 3, 15, 2, 230, 'Waiting For Love'),
+ (2, 3, 6, 6, 2, 256, 'La Jumpa'),
+ (3, 1, 2, 7, 3, 169, 'Mala Mente'),
+ (4, 1, 9, 6, 3, 158, 'Allergic'),
+ (4, 1, 7, 6, 1, 227, 'Circles'),
+ (3, 2, 1, 7, 2, 109, 'Bizcochito'),
+ (2, 2, 8, 8, 1, 196, 'Me Prefieres A Mi'),
+ (1, 1, 5, 2, 3, 272, 'Wake Me Up'),
+ (5, 2, 3, 6, 2, 266, 'Monaco'),
+ (5, 1, 9, 2, 3, 195, '1 Porciento'),
+ (6, 2, 1, 6, 2, 217, 'Hello Cotto'),
+ (6, 3, 2, 12, 1, 158, 'Si Te Sentis Sola'),
+ (7, 3, 3, 16, 1, 328, 'Thriller'),
+ (7, 2, 3, 7, 1, 295, 'Billie Jean'),
+ (8, 2, 2, 3, 2, 176, 'I Got A Woman'),
+ (8, 3, 3, 10, 2, 139, 'Hit The Road'),
+ (9, 1, 5, 1, 1, 237, 'El Hijo De Hernandez'),
+ (9, 1, 7, 1, 3, 250, 'Roberto'),
+ (10, 3, 3, 7, 2, 213, 'Waka Waka'),
+ (10, 3, 2, 2, 1, 187, 'El Jefe');
