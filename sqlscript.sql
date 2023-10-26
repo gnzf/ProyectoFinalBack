@@ -233,3 +233,13 @@ INSERT INTO public.canciones (artist_id, mood_id, activity_id, genre_id, climate
  (9, 1, 7, 1, 3, 250, 'Roberto'),
  (10, 3, 3, 7, 2, 213, 'Waka Waka'),
  (10, 3, 2, 2, 1, 187, 'El Jefe');
+
+ --@block
+ INSERT INTO public.playlists (user_id ,name_playlist) VALUES
+    (1,'Primer Playlist'),
+    (2,'Segunda Playlist');
+
+ --@block
+ INSERT INTO public.canciones_playlists (playlist_id ,canciones_id) VALUES
+    (3,3),
+    (2,2);

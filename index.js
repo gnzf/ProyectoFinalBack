@@ -7,6 +7,7 @@ const canciones = require("./routes/canciones");
 const buscador = require("./routes/buscador");
 const authRoute = require("./routes/authroute");
 const loginRoute = require("./routes/loginAuthRoutes")
+const usuarios = require("./routes/usuarios")
 
 const app = express();
 
@@ -18,6 +19,7 @@ require("dotenv").config();
 
 app.use("/api", canciones);
 app.use("/api", buscador);
+app.use("/api", usuarios);
 app.use("/api/auth", authRoute)
 app.use("/api/auth", loginRoute)
 
