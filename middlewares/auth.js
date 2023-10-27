@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-exports.verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   const token = req.header("Authorization");
   if (!token) {
     res.status(401).json({ error: "Acceso al recurso denegado" });
@@ -16,3 +16,5 @@ exports.verifyToken = (req, res, next) => {
     res.status(400).json({ error: "El token es invalido", mensaje: error });
   }
 };
+
+module.exports = {verifyToken}
