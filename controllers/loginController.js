@@ -3,13 +3,13 @@ const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 
 const login = async (req, res) => {
-    const { identifier, password } = req.body; // Cambia "email" a "identifier"
+    const { user_email, password } = req.body; 
   
     try {
       // 1)chequear que existe el email o nombre_usuario
       const usuario = await knex("usuarios")
-        .where("email", identifier)
-        .orWhere("username", identifier);
+        .where("email", user_email)
+        .orWhere("username", user_email);
   
       if (!usuario.length) {
         res.status(403).json({ error: "Email/nombre de usuario y/o contraseña incorrectos" });
