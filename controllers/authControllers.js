@@ -28,7 +28,7 @@ const register= async (req, res) => {
       username: username,
       password: passwordEncrypt,
     });
-    
+
     const userInserted = await knex("usuarios").where("email", email).first();
     const userId = userInserted.id_users; // Obten el ID del usuario registrado
 
