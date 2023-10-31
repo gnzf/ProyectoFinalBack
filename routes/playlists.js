@@ -7,6 +7,8 @@ const { cancionesFilter, playlistAdd, playlistSongsAdd } = require("../controlle
 const router = express.Router();
 
 router.get("/cancionesPlaylist", loggerGet, cancionesFilter);
+router.post("/addPlaylist", playlistAdd);
+router.post("/addCancionesPlaylist", playlistSongsAdd);
 
 
 module.exports = router;
