@@ -6,6 +6,7 @@ const register= async (req, res) => {
   const { email, username, password } = req.body;
 
   try {
+    console.log("Registro iniciado"); //
     // Verificar si ya existe un usuario con el mismo email
     const userWithEmail = await knex("usuarios").where("email", email).first();
     if (userWithEmail) {
@@ -27,36 +28,25 @@ const register= async (req, res) => {
       username: username,
       password: passwordEncrypt,
     });
+    
+    const userInserted = await knex("usuarios").where("email", email).first();
+    const userId = userInserted.id_users; // Obten el ID del usuario registrado
 
-    res.status(200).json({ mensaje: "Usuario creado correctamente" });
+    const token = jsonwebtoken.sign(
+      {
+        user_id: userId, // o cualquier otro identificador único del usuario
+        email: userWithEmail ? userWithEmail.email : null,
+        username: userWithUsername ? userWithUsername.username : null,
+      },
+      "mifirma" // Debes usar una clave secreta segura
+    );
+    console.log("Registro completado"); // 
+    res.status(200).json({ mensaje: "Usuario creado correctamente", token: token, user_id: userId});
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Ocurrió un error al registrar el usuario" });
   }
 };
-
-/* const register1 = async (req, res) => {
-  const { email} = req.body;
-
-
-  //2) que no exista username, email
-  try {
-    const existeEmail = await knex("usuarios").where("email", email);
-    if (existeEmail.length) {
-      res.status(400).json({ error: "Ya existe un registro con ese email" });
-      return;
-    }
-    await knex("usuarios").insert({
-      email: email,
-      password: password,
-      username: username
-    });
-    //3) esta todo ok, insertamos. Si no, respuesta de error
-
-    res.status(200).json({ mensaje: "Usuario creado correctamente" });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-}; */
 
 
 module.exports = {register};

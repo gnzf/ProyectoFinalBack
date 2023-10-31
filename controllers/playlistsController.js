@@ -84,7 +84,7 @@ const playlistAdd = async (req, res) => {
 }
 
 
-const playlistSongsAdd = async (req, res) => {
+/* const playlistSongsAdd = async (req, res) => {
   const { cancionName } = req.body;
 
   try {
@@ -126,8 +126,69 @@ const playlistSongsAdd = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+ */
+
+const playlistSongsAdd = async (req, res) => {
+  const { cancionName, playlistId } = req.body;
+
+  try {
+    const cancion = await knex('canciones')
+      .where('cancion_name', cancionName)
+      .select('id_canciones')
+      .first();
+
+    if (!cancion) {
+      return res.status(404).json({
+        error: 'No se ha encontrado una canción con ese nombre',
+      });
+    }
+
+    // Inserta la relación entre la playlist y la canción en "canciones_playlists"
+    await knex('canciones_playlists').insert({
+      playlist_id: playlistId,
+      canciones_id: cancion.id_canciones,
+    })
+
+    res.json({
+      message: 'Datos ingresados en canciones_playlists correctamente',
+      playlist_id: playlistId,
+      canciones_id: cancion.id_canciones,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 
+const playlistGeneradaSongsAll = async (req, res) => {
+  const  usuarioId  = +req.body.usuarioId;
+  try {
+    // Obtener el ID de la última playlist
+    const ultimaPlaylistId = await knex("playlists")
+      .where("user_id",  usuarioId )
+      .orderBy("id_playlist", "desc")
+      .limit(1)
+      .pluck("id_playlist");
 
+    if (ultimaPlaylistId.length === 0) {
+      return res.status(404).json({ error: "No se encontró ninguna playlist." });
+    }
 
-module.exports = { cancionesFilter, playlistAdd, playlistSongsAdd};
+    // Obtener todos los registros de canciones_playlists relacionados con la última playlist
+    const resultado = await knex("canciones_playlists")
+    .join("canciones", "canciones_playlists.canciones_id", "=", "canciones.id_canciones")
+    .join("artistas", "canciones.artist_id", "=", "artistas.id_artist")
+      .where("playlist_id", ultimaPlaylistId[0])
+      .select("canciones_playlists.*", "canciones.duration", "canciones.cancion_name", "artistas.name_artist");
+
+    if (resultado.length === 0) {
+      return res.status(404).json({ error: "No se encontraron registros en canciones_playlists para la última playlist." });
+    }
+
+    res.json(resultado);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { cancionesFilter, playlistAdd, playlistSongsAdd, playlistGeneradaSongsAll};

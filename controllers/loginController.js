@@ -34,6 +34,7 @@ const login = async (req, res) => {
         {
           nombre: usuario[0].username,
           email: usuario[0].email, // PAYLOAD
+          user_id: usuario[0].id_users,
        /*    perfil: usuario[0].perfil, */
         },
         "mifirma"
