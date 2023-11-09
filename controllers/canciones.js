@@ -4,7 +4,7 @@ const allCanciones= async (req, res) => {
     try {
       const resultado = await knex("canciones")
       .join('artistas', 'canciones.artist_id', '=', 'artistas.id_artist')
-      .select('canciones.*', 'artistas.name_artist')
+      .select('canciones.*', 'artistas.name_artist', 'artistas.image_artist')
       res.json(resultado);
     } catch (error) {
       res.status(404).json({ error: error.message });
@@ -47,5 +47,14 @@ const allActividades = async (req,res) =>{
   }
 }
 
+const allArtistas= async (req, res) => {
+  try {
+    const resultado = await knex("artistas")
+    .select('artistas.id_artist', 'artistas.name_artist', 'artistas.image_artist')
+    res.json(resultado);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+};
 
-  module.exports = {allCanciones, allGeneros, allActividades, allClima, allMoods}
+  module.exports = {allCanciones, allGeneros, allActividades, allClima, allMoods, allArtistas}

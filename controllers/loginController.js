@@ -39,10 +39,11 @@ const login = async (req, res) => {
         },
         "mifirma"
       );
-
+      console.log("Token JWT generado:", token);
+      console.log("Inicio de sesión exitoso para el usuario:", usuario[0].username);
       res
         .status(200)
-        .json({ mensaje: "Inicio de sesión correcto", token: token });
+        .json({ mensaje: "Inicio de sesión correcto", token: token,  user_id: usuario[0].id_users});
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
