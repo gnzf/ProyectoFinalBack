@@ -6,7 +6,7 @@ const { verifyToken } = require("../middlewares/auth");
 const router = express.Router();
 
 
-router.get("/playlistUsuario", playlistUsuario);
-router.get("/username", usuarioUsername);
+router.get("/playlistUsuario", verifyToken, playlistUsuario);
+router.get("/username", verifyToken, usuarioUsername);
 
 module.exports = router;
