@@ -3,13 +3,6 @@ const knex = require("../config/knexfile");
 const cancionesFilter = async (req, res) => {
   const { genero, estadodeanimo, actividad, clima } = req.query;
 
-  console.log("Datos recibidos del frontend:", {
-    genero,
-    estadodeanimo,
-    actividad,
-    clima,
-  });
-  console.log("Datos recibidos en la solicitud GET:", req.query);
   const query = knex("canciones")
     .join("artistas", "canciones.artist_id", "=", "artistas.id_artist")
     .select(
@@ -56,10 +49,8 @@ const cancionesFilter = async (req, res) => {
     }
     
   }
-  console.log("Consulta SQL generada:", query.toString());
   try {
     const result = await query;
-    console.log("Resultado", result);
     if (result.length) {
       res.json(result);
     } else {
@@ -68,7 +59,6 @@ const cancionesFilter = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("El error: ", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -122,7 +112,6 @@ const playlistSongsAdd = async (req, res) => {
 
 const playlistGeneradaSongsAll = async (req, res) => {
   const { usuarioId } = req.query;
-  console.log("Usuario ID recibido en el backend:", usuarioId);
   try {
     // Obtener el ID de la última playlist
     const ultimaPlaylistId = await knex("playlists")
@@ -207,10 +196,6 @@ const artistsSongsFilter = async (req, res) => {
   const { artistName } = req.query;
   const artistNameArray = Array.isArray(artistName) ? artistName : artistName.split(',');
 
-  console.log("Datos recibidos del frontend:", {
-    artistNameArray,
-  });
-  console.log("Datos recibidos en la solicitud GET:", req.query);
   try {
     const result = await knex("artistas")
       .join("canciones", "artistas.id_artist", "=", "canciones.artist_id")
@@ -227,7 +212,6 @@ const artistsSongsFilter = async (req, res) => {
     }
     res.json(result);
   } catch (error) {
-    console.log("El error: ", error);
     res.status(500).json({ error: error.message });
   }
 };
